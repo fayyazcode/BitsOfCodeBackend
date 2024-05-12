@@ -41,7 +41,6 @@ const generateAccessAndRefreshTokens = async (userId: string) => {
 // Signup
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
 	const { name, username, email, password, roles } = req.body;
-	console.log({ name, username, email, password, roles });
 
 	if (!name || !username || !email || !password) {
 		throw new ApiError(400, "Please fill all details!");
@@ -77,7 +76,6 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
 // Login
 const loginUser = asyncHandler(async (req: Request, res: Response) => {
 	const { emailOrUsername, password, fcmToken } = req.body;
-	console.log({ emailOrUsername, password });
 
 	if (!emailOrUsername || !password) {
 		throw new ApiError(400, "Please fill all details!");
@@ -328,6 +326,28 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 		.json(new ApiResponse(200, "Password Reset Successfully!"));
 });
 
+const roleAssign = asyncHandler(async (req: Request, res: Response) => {
+	const { userId, role } = req.params;
+
+	const user = await User.findById(userId);
+
+	if (!user) {
+		throw new ApiError(400, "User not found!");
+	}
+
+	let roleUpdated = await User.findByIdAndUpdate(userId, {
+		assignedRole: role,
+	});
+
+	if (!roleUpdated) {
+		throw new ApiError(500, "Something went wrong while creating role!");
+	}
+
+	return res
+		.status(200)
+		.json(new ApiResponse(200, "Role updated Successfully!"));
+});
+
 export {
 	registerUser,
 	loginUser,
@@ -337,4 +357,5 @@ export {
 	sendResetPasswordToken,
 	resetPassword,
 	allUsers,
+	roleAssign,
 };

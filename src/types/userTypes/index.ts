@@ -13,7 +13,7 @@ export interface IUser extends IUserDocument {
 	email: string;
 	password: string;
 	roles: string;
-	assignedRoles: [string];
+	assignedRole: string;
 	phone?: string;
 	gender?: string;
 	bio?: string;

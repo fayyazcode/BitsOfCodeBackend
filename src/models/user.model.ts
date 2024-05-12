@@ -30,17 +30,13 @@ const userSchema = new Schema<IUser>(
 		},
 		roles: {
 			type: String,
-			enum: ["freelancer", "client"],
+			enum: ["freelancer", "client", "super admin"],
 			default: "freelancer",
 		},
-		assignedRoles: {
-			type: [
-				{
-					type: String,
-					enum: ["Developer", "Team Lead", "Project Manager"],
-				},
-			],
-			default: ["Developer"],
+		assignedRole: {
+			type: String,
+			enum: ["Developer", "Team Lead", "Project Manager"],
+			default: "Developer",
 		},
 		phone: {
 			type: String,

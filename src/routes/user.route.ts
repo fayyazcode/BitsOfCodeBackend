@@ -6,6 +6,7 @@ import {
 	refreshAccessToken,
 	registerUser,
 	resetPassword,
+	roleAssign,
 	sendResetPasswordToken,
 	userProfile,
 } from "../controllers/user.controller";
@@ -30,7 +31,14 @@ router.get("/logout/:fcmToken", logoutUser);
 router.route("/refreshToken").post(verifyRefreshToken, refreshAccessToken);
 
 // profile
-router.get("/profile", authMiddleware, roleCheck("author"), userProfile);
+router.get("/profile", authMiddleware, userProfile);
+
+router.get(
+	"/role-assign",
+	authMiddleware,
+	roleCheck("super admin"),
+	roleAssign
+);
 // router.put("/editprofile", authenticate, AuthController.userProfileEdit);
 
 router.route("/").get(authMiddleware, allUsers);
