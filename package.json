@@ -1,0 +1,51 @@
+{
+	"name": "backend-bits-of-code",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "npx tsc",
+		"dev": "nodemon src/index.ts",
+		"start": "node dist/index.ts"
+	},
+	"keywords": [],
+	"author": "Jaffer Sunny",
+	"license": "ISC",
+	"dependencies": {
+		"bcrypt": "^5.1.1",
+		"bull": "^4.12.2",
+		"cloudinary": "^1.41.0",
+		"concurrently": "^8.2.2",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"datauri": "^4.1.0",
+		"dotenv": "^16.3.1",
+		"express": "^4.18.2",
+		"firebase": "^10.10.0",
+		"firebase-admin": "^12.0.0",
+		"jsonwebtoken": "^9.0.2",
+		"moment": "^2.30.1",
+		"mongoose": "^8.0.3",
+		"mongoose-aggregate-paginate-v2": "^1.0.6",
+		"multer": "1.4.5-lts.1",
+		"nodemailer": "^6.9.10",
+		"socket.io": "^4.7.5",
+		"stripe": "^14.12.0",
+		"uuid": "^9.0.1"
+	},
+	"devDependencies": {
+		"@types/bcrypt": "^5.0.2",
+		"@types/cookie-parser": "^1.4.7",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.6",
+		"@types/multer": "^1.4.11",
+		"@types/nodemailer": "^6.4.14",
+		"nodemon": "^3.0.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.4.3"
+	},
+	"engines": {
+		"node": "16.14.2"
+	}
+}
