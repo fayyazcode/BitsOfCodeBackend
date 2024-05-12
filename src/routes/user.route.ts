@@ -33,7 +33,7 @@ router.route("/refreshToken").post(verifyRefreshToken, refreshAccessToken);
 // profile
 router.get("/profile", authMiddleware, userProfile);
 
-router.get(
+router.patch(
 	"/role-assign",
 	authMiddleware,
 	roleCheck("super admin"),

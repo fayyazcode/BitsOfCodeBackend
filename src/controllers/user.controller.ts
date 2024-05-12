@@ -327,7 +327,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const roleAssign = asyncHandler(async (req: Request, res: Response) => {
-	const { userId, role } = req.params;
+	const { userId, role } = req.body;
 
 	const user = await User.findById(userId);
 
