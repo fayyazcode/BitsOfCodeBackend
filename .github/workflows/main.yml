@@ -9,10 +9,13 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Sync to Glitch Project
         uses: wei/git-sync@v3
         with:
           source_repo: "https://github.com/jaffasunny/BitsOfCodeBackend.git"
           source_branch: main
-          destination_repo: ${{ secrets.glitch_git_URL }}
+          destination_repo: ${{ secrets.GLITCH_GIT_URL }}
           destination_branch: master
