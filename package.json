@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "npx tsc",
 		"dev": "nodemon src/index.ts",
-		"start": "npm run build && node dist/index.ts"
+		"start": "npm run build && node dist/index.js"
 	},
 	"keywords": [],
 	"author": "Jaffer Sunny",
