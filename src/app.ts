@@ -36,7 +36,7 @@ import messageRouter from "./routes/message.route";
 app.get("/", (req, res) => {
 	return res
 		.status(200)
-		.send("<h1>Welcome to intial route for Backend Bits of Code...</h1>");
+		.send("<h1>Welcome to intial route for Backend Bits of Codesss...</h1>");
 });
 
 // auth routes
