@@ -1,17 +1,18 @@
-on: 
- pull_request:
-  types: [closed] 
+name: Glitch Sync
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  repo-sync:
-    if: github.event.pull_request.merged == true
+  sync:
     runs-on: ubuntu-latest
     steps:
-    - name: repo-sync
-      uses: wei/git-sync@v1
-      env:
-        SOURCE_REPO: "https://github.com/jaffasunny/BitsOfCodeBackend"
-        SOURCE_BRANCH: "main"
-        DESTINATION_REPO: ${{ secrets.glitch_git_URL }}
-        DESTINATION_BRANCH: "master"
-      with:
-        args: $SOURCE_REPO $SOURCE_BRANCH $DESTINATION_REPO $DESTINATION_BRANCH
+      - name: Sync to Glitch Project
+        uses: wei/git-sync@v3
+        with:
+          source_repo: https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          source_branch: main
+          destination_repo: ${{ secrets.glitch_git_URL }}
+          destination_branch: master
