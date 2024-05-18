@@ -3,9 +3,9 @@ name: Glitch Sync
 on:
   pull_request:
     types: [closed]
-push:
-  branches:
-    - main
+  push:
+    branches:
+      - main
 jobs:
   repo-sync:
     if: github.event.pull_request.merged == true
