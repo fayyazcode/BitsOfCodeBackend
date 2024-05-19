@@ -27,7 +27,7 @@ router.post("/reset-password", sendResetPasswordToken); // get reset password to
 router.post("/reset-password/:userId/:token", resetPassword); // reset password
 
 // secured routes
-router.get("/logout", logoutUser);
+router.get("/logout", authMiddleware, logoutUser);
 router.route("/refreshToken").post(verifyRefreshToken, refreshAccessToken);
 
 // profile
