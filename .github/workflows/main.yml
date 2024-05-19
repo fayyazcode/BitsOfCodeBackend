@@ -16,3 +16,4 @@ jobs:
           source_branch: main
           destination_repo: ${{ secrets.GLITCH_GIT_URL }}
           destination_branch: master
+          force: true
