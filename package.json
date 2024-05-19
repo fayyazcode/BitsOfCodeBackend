@@ -1,7 +1,7 @@
 {
 	"name": "backend-bits-of-code",
 	"version": "1.0.0",
-	"description": "This is a backend application!!",
+	"description": "This is a backend application!!!",
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "npx tsc",
