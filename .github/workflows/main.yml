@@ -12,8 +12,8 @@ jobs:
       - name: Sync to Glitch Project
         uses: wei/git-sync@v3
         with:
-          source_repo: "https://github.com/jaffasunny/BitsOfCodeBackend.git"
-          source_branch: main
-          destination_repo: ${{ secrets.GLITCH_GIT_URL }}
-          destination_branch: master
-          force: true
+          SOURCE_REPO: "https://github.com/jaffasunny/BitsOfCodeBackend.git"
+          SOURCE_BRANCH: main
+          DESTINATION_REPO: ${{ secrets.GLITCH_GIT_URL }}
+          DESTINATION_BRANCH: master
+          FORCE: true
