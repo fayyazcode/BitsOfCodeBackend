@@ -1,7 +1,7 @@
 {
 	"name": "backend-bits-of-code",
 	"version": "1.0.0",
-	"description": "This is a backend application that serves a frontend deployed on netlify!!",
+	"description": "This is a backend application!!",
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "npx tsc",
