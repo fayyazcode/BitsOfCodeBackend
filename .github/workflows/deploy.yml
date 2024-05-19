@@ -1,0 +1,35 @@
+name: Deploy to Glitch
+
+on:
+  push:
+    branches:
+      - main # Or whatever branch you want to deploy from
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14" # Use the version your project requires
+
+      - name: Set up git for Glitch
+        run: |
+          git config --global user.email "jaffer.sunny125@gmail.com"
+          git config --global user.name "Jaffer Sunny"
+
+      - name: Add Glitch remote
+        run: git remote add glitch ${{ secrets.GLITCH_GIT_URL }}
+        env:
+          GLITCH_GIT_URL: ${{ secrets.GLITCH_GIT_URL }}
+
+      - name: Push to Glitch
+        run: |
+          git push --force glitch main:master
+        env:
+          GLITCH_GIT_URL: ${{ secrets.GLITCH_GIT_URL }}
