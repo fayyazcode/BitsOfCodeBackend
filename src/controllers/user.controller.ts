@@ -8,6 +8,8 @@ import crypto from "crypto";
 import { IUser } from "../types/userTypes";
 import { Request, Response } from "express";
 
+const EXPIRE_TIME = 24 * 60 * 60 * 1000;
+
 // Generate New Refresh Token and Access Token
 const generateAccessAndRefreshTokens = async (userId: string) => {
 	try {
@@ -127,7 +129,12 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 		.json(
 			new ApiResponse(
 				200,
-				{ user, accessToken, refreshToken },
+				{
+					user,
+					accessToken,
+					refreshToken,
+					expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
+				},
 				"Login Successful!"
 			)
 		);
@@ -251,7 +258,11 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
 			.json(
 				new ApiResponse(
 					200,
-					{ accessToken, refreshToken: newRefreshToken },
+					{
+						accessToken,
+						refreshToken: newRefreshToken,
+						expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
+					},
 					"Access token refreshed successfully!"
 				)
 			);
