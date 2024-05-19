@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
 	return res
 		.status(200)
 		.send(
-			"<h1>Testing apis: Welcome to intial route for Backend Bits of Code...</h1>"
+			"<h1>Testing apisss: Welcome to intial route for Backend Bits of Code...</h1>"
 		);
 });
 
