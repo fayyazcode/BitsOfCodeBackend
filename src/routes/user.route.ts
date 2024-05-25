@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
 	allUsers,
+	fetchProjectManagersOrTeamLead,
 	loginUser,
 	logoutUser,
 	refreshAccessToken,
@@ -32,6 +33,12 @@ router.route("/refreshToken").post(verifyRefreshToken, refreshAccessToken);
 
 // profile
 router.get("/profile", authMiddleware, userProfile);
+
+router.get(
+	"/projectManagersOrTeamLead",
+	authMiddleware,
+	fetchProjectManagersOrTeamLead
+);
 
 router.patch(
 	"/role-assign",

@@ -33,18 +33,27 @@ const projectSchema = new Schema<IProject>(
 			ref: "User",
 			required: [true, "Project Manager is required!"],
 		},
-		// clientName: {
-		// 	type: String,
-		// 	required: [true, "Client Name is required!"],
-		// },
+		clientName: {
+			type: String,
+			ref: "User",
+			required: [true, "Client Name is required!"],
+		},
 		budgetType: {
 			type: String,
-			enum: ["Fixed price", "Hourly rate"],
+			enum: ["fixed", "hourly"],
 			required: [true, "Project Budget Type is required!!"],
 		},
 		budgetAmount: {
 			type: Number,
 			required: [true, "Project Budget amount is required!"],
+		},
+		// description: {
+		// 	type: Object,
+		// 	required: [true, "Project Description is required!"],
+		// },
+		description: {
+			type: String,
+			required: [true, "Project Description is required!"],
 		},
 	},
 	{

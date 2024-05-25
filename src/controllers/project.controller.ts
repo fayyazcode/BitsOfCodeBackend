@@ -10,159 +10,164 @@ import DataURIParser from "datauri/parser";
 import { messaging } from "../firebase";
 import { Notification } from "../models/notification.model";
 import { ObjectId } from "mongoose";
+import { Project } from "../models/project.model";
 
-const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
-	const posts = await Post.find().populate("authorId");
+const getAllProjects = asyncHandler(async (req: Request, res: Response) => {
+	const projects = await Project.find().populate(
+		"projectManager",
+		"clientName"
+	);
 
-	if (!posts) {
-		throw new ApiError(404, "No posts available!");
+	if (!projects) {
+		throw new ApiError(404, "No projects available!");
 	}
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, posts, "Posts successfully fetched!"));
+		.json(new ApiResponse(200, projects, "Projects successfully fetched!"));
 });
 
-const getSinglePost = asyncHandler(async (req: Request, res: Response) => {
+const getSingleProject = asyncHandler(async (req: Request, res: Response) => {
 	const { id } = req.params;
 
-	const post = await Post.findById(id)
-		.populate({
-			path: "authorId",
-			select: "-password", // Exclude password field
-		})
-		.populate({
-			path: "comments.authorId",
-			select: "-password", // Exclude password field
-		})
-		.populate("likes");
+	const project = await Project.findById(id).populate(
+		"projectManager",
+		"clientName"
+	);
 
-	if (!post) {
-		throw new ApiError(404, "No such post available!");
+	if (!project) {
+		throw new ApiError(404, "No such project available!");
 	}
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, post, "Posts successfully fetched!"));
+		.json(new ApiResponse(200, project, "Project successfully fetched!"));
 });
 
-const createSinglePost = asyncHandler(async (req: Request, res: Response) => {
-	const { title, description } = req.body;
+const createProject = asyncHandler(async (req: Request, res: Response) => {
+	const {
+		title,
+		projectTimeline,
+		projectCategory,
+		projectSkills,
+		projectManager,
+		clientName,
+		budgetType,
+		budgetAmount,
+		description,
+	} = req.body;
 
-	const file = req.file;
-
-	// extracting author id from authentication middleware
-	const { _id: authorId } = req.user;
-
-	if (!title || !description) {
+	if (
+		!title ||
+		!projectTimeline ||
+		!projectCategory ||
+		!projectSkills ||
+		!projectManager ||
+		!clientName ||
+		!budgetType ||
+		!budgetAmount ||
+		!description
+	) {
 		throw new ApiError(400, "Please enter all fields!");
 	}
 
-	// upload image to cloudinary
-	if (!file) {
-		throw new ApiError(400, "Please upload an image!");
-	}
-
-	let fileUri: DataURIParser = getDataUri(file);
-
-	if (!fileUri) {
-		throw new ApiError(500, "Error converting file to data URI");
-	}
-
-	const mycloud = await cloudinary.v2.uploader.upload(
-		fileUri.content as string
-	);
-
-	const post = await Post.create({
+	const project = await Project.create({
 		title,
-		authorId,
+		projectTimeline,
+		projectCategory,
+		projectSkills,
+		projectManager,
+		clientName,
+		budgetType,
+		budgetAmount,
 		description,
-		image: {
-			public_id: mycloud.public_id,
-			url: mycloud.secure_url,
-		},
 	});
 
-	const createdPost = await Post.findById(post._id);
+	const createdProject = await Project.findById(project._id);
 
-	if (!createdPost) {
-		throw new ApiError(500, "Something went wrong while creating post!");
+	if (!createdProject) {
+		throw new ApiError(500, "Something went wrong while creating project!");
 	}
 
 	return res
 		.status(201)
-		.json(new ApiResponse(200, createdPost, "Post created successfully!"));
+		.json(
+			new ApiResponse(200, createdProject, "Project created successfully!")
+		);
 });
 
-const updatePost = asyncHandler(async (req: Request, res: Response) => {
-	const { title, authorId, description } = req.body;
+const updateProject = asyncHandler(async (req: Request, res: Response) => {
+	const {
+		title,
+		projectTimeline,
+		projectCategory,
+		projectSkills,
+		projectManager,
+		clientName,
+		budgetType,
+		budgetAmount,
+		description,
+	} = req.body;
 	const { id } = req.params;
-	const file = req.file;
 
-	const posts = await Post.findById(id);
+	const project = await Project.findById(id);
 
-	if (!posts) {
-		throw new ApiError(404, "Post doesn't exist!");
+	if (!project) {
+		throw new ApiError(404, "Project doesn't exist!");
 	}
 
-	// upload image to cloudinary
-	if (!file) {
-		throw new ApiError(400, "Please upload an image!");
-	}
-
-	let fileUri: DataURIParser = getDataUri(file);
-
-	if (!fileUri) {
-		throw new ApiError(500, "Error converting file to data URI");
-	}
-
-	const mycloud = await cloudinary.v2.uploader.upload(
-		fileUri.content as string
-	);
-
-	const updatedPost = await Post.findByIdAndUpdate(
+	const updatedProject = await Project.findByIdAndUpdate(
 		id,
 		{
 			title,
-			authorId,
+			projectTimeline,
+			projectCategory,
+			projectSkills,
+			projectManager,
+			clientName,
+			budgetType,
+			budgetAmount,
 			description,
-			image: {
-				public_id: mycloud.public_id,
-				url: mycloud.secure_url,
-			},
 		},
 		{ new: true, runValidators: true }
 	);
 
-	if (!updatedPost) {
-		throw new ApiError(500, "Something went wrong while creating post!");
+	if (!updatedProject) {
+		throw new ApiError(500, "Something went wrong while updating project!");
 	}
 
 	return res
 		.status(201)
-		.json(new ApiResponse(200, updatedPost, "Post updated successfully!"));
+		.json(
+			new ApiResponse(200, updatedProject, "Project updated successfully!")
+		);
 });
 
-const removePost = asyncHandler(async (req: Request, res: Response) => {
+const removeProject = asyncHandler(async (req: Request, res: Response) => {
 	const { id } = req.params;
 
-	const posts = await Post.findById(id);
+	const project = await Project.findById(id);
+	console.log({ project });
 
-	if (!posts) {
-		throw new ApiError(404, "Post doesn't exist!");
+	if (!project) {
+		throw new ApiError(404, "Project doesn't exist!");
 	}
 
-	const deletedPost = await Post.findByIdAndDelete(id, {
+	const deletedProject = await Project.findByIdAndDelete(id, {
 		runValidators: true,
 	});
 
-	if (!deletedPost) {
-		throw new ApiError(500, "Something went wrong while creating post!");
+	console.log({ deletedProject });
+
+	if (!deletedProject) {
+		throw new ApiError(500, "Something went wrong while deleting Project!");
 	}
 
 	return res
 		.status(201)
-		.json(new ApiResponse(200, deletedPost, "Post deleted successfully!"));
+		.json(
+			new ApiResponse(200, deletedProject, "Project deleted successfully!")
+		);
 });
 
 const likePost = asyncHandler(async (req: Request, res: Response) => {
@@ -298,11 +303,11 @@ const commentPost = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export {
-	getAllPosts,
-	createSinglePost,
-	updatePost,
-	removePost,
-	getSinglePost,
+	getAllProjects,
+	createProject,
+	updateProject,
+	removeProject,
+	getSingleProject,
 	likePost,
 	commentPost,
 };
