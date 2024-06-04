@@ -289,7 +289,7 @@ const sendResetPasswordToken = asyncHandler(
 		if (!token) {
 			token = await new ResetPasswordToken({
 				userId: user._id,
-				token: crypto.randomBytes(32).toString("hex"),
+				token: crypto.randomBytes(6).toString("hex"),
 			}).save();
 		}
 
