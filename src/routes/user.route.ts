@@ -10,6 +10,7 @@ import {
 	roleAssign,
 	sendResetPasswordToken,
 	userProfile,
+	verifyResetPasswordOTP,
 } from "../controllers/user.controller";
 import {
 	authMiddleware,
@@ -24,8 +25,9 @@ router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 
 // reset password
-router.post("/reset-password", sendResetPasswordToken); // get reset password token
-router.post("/reset-password/:userId/:token", resetPassword); // reset password
+router.post("/getResetPassword", sendResetPasswordToken); // get reset password token
+router.post("/verifyResetPasswordOtp", verifyResetPasswordOTP); // get reset password token
+router.post("/reset-password", resetPassword); // reset password
 
 // secured routes
 router.get("/logout", authMiddleware, logoutUser);
