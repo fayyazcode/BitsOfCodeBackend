@@ -287,14 +287,22 @@ const sendResetPasswordToken = asyncHandler(
 		let token = await ResetPasswordToken.findOne({ userId: user._id });
 
 		if (!token) {
+			const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
 			token = await new ResetPasswordToken({
 				userId: user._id,
-				token: crypto.randomBytes(6).toString("hex"),
+				token: otp,
 			}).save();
+		} else {
+			// If a token already exists, update it with a new OTP and reset the expiration time
+			token.token = Math.floor(100000 + Math.random() * 900000).toString();
+			await token.save();
 		}
 
-		const link = `${process.env.BASE_URL}/reset-password/${user._id}/${token.token}`;
-		await sendEmail(user.email, "Password reset", link);
+		await sendEmail(
+			user.email,
+			"Password reset OTP",
+			`Your OTP is ${token.token}`
+		);
 
 		return res
 			.status(200)
@@ -304,8 +312,28 @@ const sendResetPasswordToken = asyncHandler(
 	}
 );
 
+const verifyResetPasswordOTP = asyncHandler(
+	async (req: Request, res: Response) => {
+		const { userId, otp } = req.body;
+
+		const token = await ResetPasswordToken.findOne({
+			userId,
+			token: otp,
+			expiresAt: { $gt: new Date() }, // Ensure the OTP is not expired
+		});
+
+		if (!token) {
+			throw new ApiError(400, "Invalid or expired OTP");
+		}
+
+		return res
+			.status(200)
+			.json(new ApiResponse(200, "OTP verified successfully"));
+	}
+);
+
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-	const { userId, token: enteredToken } = req.params;
+	const { userId } = req.params;
 	const { password } = req.body;
 
 	const user = await User.findById(userId);
@@ -319,7 +347,6 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 
 	let resetPasswordToken = await ResetPasswordToken.findOne({
 		userId: user._id,
-		token: enteredToken,
 	});
 
 	if (!resetPasswordToken) {
@@ -332,7 +359,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 	user.password = password;
 	await user.save();
 	await ResetPasswordToken.findOneAndDelete({
-		token: enteredToken,
+		userId: user._id,
 	});
 
 	return res
@@ -396,4 +423,5 @@ export {
 	allUsers,
 	roleAssign,
 	fetchProjectManagersOrTeamLead,
+	verifyResetPasswordOTP,
 };

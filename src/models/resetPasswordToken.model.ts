@@ -12,9 +12,13 @@ const resetPasswordTokenSchema = new Schema<IResetPasswordToken>(
 			type: String,
 			required: [true, "Reset Password Token is required!"],
 		},
+		expiresAt: {
+			type: Date,
+		},
 	},
 	{
 		timestamps: true,
+		expireAfterSeconds: Date.now() + 15 * 60 * 1000,
 	}
 );
 

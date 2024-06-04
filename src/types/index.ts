@@ -9,4 +9,6 @@ export interface JwtPayload {
 export interface IResetPasswordToken extends Document {
 	userId: mongoose.Schema.Types.ObjectId;
 	token: string;
+	createdAt: Date;
+	expiresAt: Date;
 }
