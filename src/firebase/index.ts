@@ -1,11 +1,11 @@
-var admin = require("firebase-admin");
+// var admin = require("firebase-admin");
 
-import serviceAccount from "./../../serviceAccountKey.json";
+// import serviceAccount from "./../../serviceAccountKey.json";
 
-admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+// 	credential: admin.credential.cert(serviceAccount),
+// });
 
-export const messaging = admin.messaging();
+// export const messaging = admin.messaging();
 
-export default admin;
+// export default admin;
