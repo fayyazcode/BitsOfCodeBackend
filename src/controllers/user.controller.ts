@@ -307,7 +307,7 @@ const sendResetPasswordToken = asyncHandler(
 		return res
 			.status(200)
 			.json(
-				new ApiResponse(200, "Reset password link sent to your email address!")
+				new ApiResponse(200, "Reset password token sent to your email address!")
 			);
 	}
 );
