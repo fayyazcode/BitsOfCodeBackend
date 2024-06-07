@@ -27,10 +27,9 @@ jobs:
 
       - name: Deploy to Glitch
         env:
-          GLITCH_PROJECT_NAME: ${{ secrets.GLITCH_PROJECT_NAME }}
-          GLITCH_TOKEN: ${{ secrets.GLITCH_TOKEN }}
+          GLITCH_GIT_URL: ${{ secrets.GLITCH_GIT_URL }}
         run: |
           echo "Adding Glitch remote"
-          git remote add glitch https://${GLITCH_TOKEN}@api.glitch.com/git/${GLITCH_PROJECT_NAME}
+          git remote add glitch ${GLITCH_GIT_URL}
           echo "Force pushing to Glitch"
           git push --force glitch main
