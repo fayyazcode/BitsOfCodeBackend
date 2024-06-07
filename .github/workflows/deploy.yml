@@ -1,35 +1,17 @@
-name: Deploy to Glitch
-
-on:
-  push:
-    branches:
-      - main
-
+on: 
+ pull_request:
+  types: [closed] 
 jobs:
-  build:
+  repo-sync:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Fetch full history
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.14.2"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build
-
-      - name: Deploy to Glitch
-        env:
-          GLITCH_PROJECT_NAME: ${{ secrets.GLITCH_PROJECT_NAME }}
-          GLITCH_TOKEN: ${{ secrets.GLITCH_TOKEN }}
-        run: |
-          git remote add glitch https://${GLITCH_TOKEN}@api.glitch.com/git/${GLITCH_PROJECT_NAME}
-          git push --force glitch main
+    - name: repo-sync
+      uses: wei/git-sync@v1
+      env:
+        SOURCE_REPO: "https://github.com/jaffasunny/BitsOfCodeBackend.git"
+        SOURCE_BRANCH: "master"
+        DESTINATION_REPO: ${{ secrets.glitch_git_URL }}
+        DESTINATION_BRANCH: "master"
+      with:
+        args: $SOURCE_REPO $SOURCE_BRANCH $DESTINATION_REPO $DESTINATION_BRANCH
