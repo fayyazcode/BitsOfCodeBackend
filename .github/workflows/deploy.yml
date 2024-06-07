@@ -1,36 +1,5 @@
-on:
-  pull_request:
-    types: [closed]
-jobs:
-  repo-sync:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Fetch full history
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.14.2"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build
-
-      - name: Verify build output
-        run: ls -alh dist
-
-      - name: Deploy to Glitch
-        env:
-          GLITCH_PROJECT_NAME: ${{ secrets.GLITCH_PROJECT_NAME }}
-          GLITCH_TOKEN: ${{ secrets.GLITCH_TOKEN }}
-        run: |
-          echo "Adding Glitch remote"
-          git remote add glitch https://${GLITCH_TOKEN}@api.glitch.com/git/${GLITCH_PROJECT_NAME}
-          echo "Force pushing to Glitch"
-          git push --force glitch main
+uses: kanadgupta/glitch-sync@main
+with:
+  auth-token: "${{ secrets.authToken }}"
+  project-id: "${{ secrets.projectId }}"
+  path: "dist" # optional
