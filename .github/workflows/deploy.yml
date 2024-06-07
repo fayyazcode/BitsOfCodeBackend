@@ -6,7 +6,13 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: repo-sync
+      - name: Checkout Source Repository
+        uses: actions/checkout@v2
+        with:
+          repository: "https://github.com/jaffasunny/BitsOfCodeBackend"
+          ref: main
+
+      - name: Repo Sync
         uses: wei/git-sync@v1
         env:
           SOURCE_REPO: "https://github.com/jaffasunny/BitsOfCodeBackend"
@@ -15,3 +21,9 @@ jobs:
           DESTINATION_BRANCH: "master"
         with:
           args: $SOURCE_REPO $SOURCE_BRANCH $DESTINATION_REPO $DESTINATION_BRANCH
+
+      - name: Verify Push
+        run: |
+          git clone ${{ secrets.glitch_git_URL }} destination-repo
+          cd destination-repo
+          git log -1
