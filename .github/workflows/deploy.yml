@@ -26,10 +26,15 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Verify build output
+        run: ls -alh dist
+
       - name: Deploy to Glitch
         env:
           GLITCH_PROJECT_NAME: ${{ secrets.GLITCH_PROJECT_NAME }}
           GLITCH_TOKEN: ${{ secrets.GLITCH_TOKEN }}
         run: |
+          echo "Adding Glitch remote"
           git remote add glitch https://${GLITCH_TOKEN}@api.glitch.com/git/${GLITCH_PROJECT_NAME}
+          echo "Force pushing to Glitch"
           git push --force glitch main
