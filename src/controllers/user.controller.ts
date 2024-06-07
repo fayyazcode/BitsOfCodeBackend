@@ -314,12 +314,10 @@ const sendResetPasswordToken = asyncHandler(
 
 const verifyResetPasswordOTP = asyncHandler(
 	async (req: Request, res: Response) => {
-		const { userId, otp } = req.body;
+		const { otp } = req.body;
 
 		const token = await ResetPasswordToken.findOne({
-			userId,
 			token: otp,
-			expiresAt: { $gt: new Date() }, // Ensure the OTP is not expired
 		});
 
 		if (!token) {
@@ -333,33 +331,26 @@ const verifyResetPasswordOTP = asyncHandler(
 );
 
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-	const { userId } = req.params;
-	const { password } = req.body;
+	const { email, password } = req.body;
 
-	const user = await User.findById(userId);
+	const user = await User.find({ email });
 
 	if (!user) {
-		throw new ApiError(
-			400,
-			"Invalid Link or maybe your link has been expired!"
-		);
+		throw new ApiError(400, "Reset password timeout!");
 	}
 
 	let resetPasswordToken = await ResetPasswordToken.findOne({
-		userId: user._id,
+		userId: user[0]._id,
 	});
 
 	if (!resetPasswordToken) {
-		throw new ApiError(
-			400,
-			"Invalid Link or maybe your link has been expired!"
-		);
+		throw new ApiError(400, "Reset password timeout!");
 	}
 
-	user.password = password;
-	await user.save();
+	user[0].password = password;
+	await user[0].save();
 	await ResetPasswordToken.findOneAndDelete({
-		userId: user._id,
+		userId: user[0]._id,
 	});
 
 	return res
