@@ -1,14 +1,10 @@
-name: Deploy to Glitch
-
 on:
-  push:
-    branches:
-      - main
-
+  pull_request:
+    types: [closed]
 jobs:
-  build:
+  repo-sync:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
