@@ -9,7 +9,7 @@ jobs:
       - name: Checkout Source Repository
         uses: actions/checkout@v2
         with:
-          repository: "https://github.com/jaffasunny/BitsOfCodeBackend"
+          repository: "jaffasunny/BitsOfCodeBackend"
           ref: main
 
       - name: Repo Sync
