@@ -11,6 +11,7 @@ export interface IProject extends Document {
 	budgetType: string;
 	budgetAmount?: number;
 	description?: string;
+	tickets?: mongoose.Schema.Types.ObjectId[];
 }
 // description?: object;
 

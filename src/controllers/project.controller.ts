@@ -12,10 +12,10 @@ import { ObjectId } from "mongoose";
 import { Project } from "../models/project.model";
 
 const getAllProjects = asyncHandler(async (req: Request, res: Response) => {
-	const projects = await Project.find().populate(
-		"projectManager",
-		"clientName"
-	);
+	const projects = await Project.find()
+		.populate("projectManager", "name email")
+		.populate("clientName", "name email")
+		.populate("tickets");
 
 	if (!projects) {
 		throw new ApiError(404, "No projects available!");
@@ -29,10 +29,10 @@ const getAllProjects = asyncHandler(async (req: Request, res: Response) => {
 const getSingleProject = asyncHandler(async (req: Request, res: Response) => {
 	const { id } = req.params;
 
-	const project = await Project.findById(id).populate(
-		"projectManager",
-		"clientName"
-	);
+	const project = await Project.findById(id)
+		.populate("projectManager", "name email")
+		.populate("clientName", "name email")
+		.populate("tickets");
 
 	if (!project) {
 		throw new ApiError(404, "No such project available!");

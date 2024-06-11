@@ -2,22 +2,18 @@ import { Ticket } from "./../models/ticket.model";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
-import { Post } from "../models/post.model";
 import { Request, Response } from "express";
-import { IComment } from "../types/commentTypes";
-import getDataUri, { File } from "../utils/dataUri";
-import cloudinary from "cloudinary";
-import DataURIParser from "datauri/parser";
-import { Notification } from "../models/notification.model";
-import { ObjectId } from "mongoose";
 import { Project } from "../models/project.model";
+import { ITicket } from "../types/ticketTypes";
 
 const getAllTickets = asyncHandler(async (req: Request, res: Response) => {
 	const { projectId } = req.query;
 
 	const tickets = await Ticket.find({
 		project: projectId,
-	}).populate("developer", "project");
+	})
+		.populate("project")
+		.populate("developer");
 
 	if (!tickets) {
 		throw new ApiError(404, "No tickets available!");
@@ -45,133 +41,126 @@ const getSingleTicket = asyncHandler(async (req: Request, res: Response) => {
 const createTicket = asyncHandler(async (req: Request, res: Response) => {
 	const {
 		title,
-		projectTimeline,
-		projectCategory,
-		projectSkills,
-		projectManager,
-		clientName,
-		budgetType,
-		budgetAmount,
+		tags,
+		priority,
+		duration,
 		description,
+		developer,
+		project,
+		minimumBid,
+		maximumBid,
 	} = req.body;
 
 	if (
 		!title ||
-		!projectTimeline ||
-		!projectCategory ||
-		!projectSkills ||
-		!projectManager ||
-		!clientName ||
-		!budgetType ||
-		!budgetAmount ||
-		!description
+		!tags ||
+		!priority ||
+		!duration ||
+		!description ||
+		!minimumBid ||
+		!maximumBid ||
+		!project
 	) {
 		throw new ApiError(400, "Please enter all fields!");
 	}
 
-	const project = await Project.create({
-		title,
-		projectTimeline,
-		projectCategory,
-		projectSkills,
-		projectManager,
-		clientName,
-		budgetType,
-		budgetAmount,
-		description,
-	});
+	const projectExists = await Project.findById(project);
 
-	const createdProject = await Project.findById(project._id);
+	if (!projectExists) {
+		throw new ApiError(404, "Project doesnot exist!");
+	}
 
-	if (!createdProject) {
-		throw new ApiError(500, "Something went wrong while creating project!");
+	let ticket: ITicket;
+	if (developer.length) {
+		ticket = await Ticket.create({
+			title,
+			tags,
+			priority,
+			duration,
+			description,
+			developer,
+			project,
+			minimumBid,
+			maximumBid,
+		});
+	} else {
+		ticket = await Ticket.create({
+			title,
+			tags,
+			priority,
+			duration,
+			description,
+			project,
+			minimumBid,
+			maximumBid,
+		});
+	}
+
+	const ticketProject = await Ticket.findById(ticket._id);
+
+	if (!ticketProject) {
+		throw new ApiError(500, "Something went wrong while creating ticket!");
+	}
+
+	if (projectExists.tickets) {
+		projectExists.tickets.push(ticket._id);
+		await projectExists.save();
 	}
 
 	return res
 		.status(201)
-		.json(
-			new ApiResponse(200, createdProject, "Project created successfully!")
-		);
+		.json(new ApiResponse(200, ticketProject, "Ticket created successfully!"));
 });
 
-const updateProject = asyncHandler(async (req: Request, res: Response) => {
-	const {
-		title,
-		projectTimeline,
-		projectCategory,
-		projectSkills,
-		projectManager,
-		clientName,
-		budgetType,
-		budgetAmount,
-		description,
-	} = req.body;
+const updateTicket = asyncHandler(async (req: Request, res: Response) => {
 	const { id } = req.params;
 
-	const project = await Project.findById(id);
+	const ticket = await Ticket.findById(id);
 
-	if (!project) {
-		throw new ApiError(404, "Project doesn't exist!");
+	if (!ticket) {
+		throw new ApiError(404, "Ticket doesn't exist!");
 	}
 
-	const updatedProject = await Project.findByIdAndUpdate(
-		id,
-		{
-			title,
-			projectTimeline,
-			projectCategory,
-			projectSkills,
-			projectManager,
-			clientName,
-			budgetType,
-			budgetAmount,
-			description,
-		},
-		{ new: true, runValidators: true }
-	);
+	const updatedTicket = await Ticket.findByIdAndUpdate(id, req.body, {
+		new: true,
+		runValidators: true,
+	});
 
-	if (!updatedProject) {
+	if (!updatedTicket) {
 		throw new ApiError(500, "Something went wrong while updating project!");
 	}
 
 	return res
 		.status(201)
-		.json(
-			new ApiResponse(200, updatedProject, "Project updated successfully!")
-		);
+		.json(new ApiResponse(200, updatedTicket, "Ticket updated successfully!"));
 });
 
-const removeProject = asyncHandler(async (req: Request, res: Response) => {
+const removeTicket = asyncHandler(async (req: Request, res: Response) => {
 	const { id } = req.params;
 
-	const project = await Project.findById(id);
-	console.log({ project });
+	const ticket = await Ticket.findById(id);
 
-	if (!project) {
-		throw new ApiError(404, "Project doesn't exist!");
+	if (!ticket) {
+		throw new ApiError(404, "Ticket doesn't exist!");
 	}
 
-	const deletedProject = await Project.findByIdAndDelete(id, {
+	const deletedTicket = await Ticket.findByIdAndDelete(id, {
 		runValidators: true,
 	});
 
-	console.log({ deletedProject });
-
-	if (!deletedProject) {
-		throw new ApiError(500, "Something went wrong while deleting Project!");
+	if (!deletedTicket) {
+		throw new ApiError(500, "Something went wrong while deleting Ticket!");
 	}
 
 	return res
 		.status(201)
-		.json(
-			new ApiResponse(200, deletedProject, "Project deleted successfully!")
-		);
+		.json(new ApiResponse(200, deletedTicket, "Ticket deleted successfully!"));
 });
 
 export {
 	getAllTickets,
 	createTicket,
-	updateProject,
-	removeProject,
+	updateTicket,
+	removeTicket,
 	getSingleTicket,
 };
