@@ -31,6 +31,7 @@ import projectRouter from "./routes/project.route";
 import notificationRouter from "./routes/notification.route";
 import chatRouter from "./routes/chat.route";
 import messageRouter from "./routes/message.route";
+import skillRouter from "./routes/skill.route";
 
 // routes declaration
 app.get("/", (req, res) => {
@@ -53,8 +54,11 @@ app.use("/api/v1/notifications", notificationRouter);
 // chats routes
 app.use("/api/v1/chats", chatRouter);
 
-// chats routes
+// message routes
 app.use("/api/v1/message", messageRouter);
+
+// skill routes
+app.use("/api/v1/skills", skillRouter);
 
 // http://localhost:8000/api/v1/users/register
 
