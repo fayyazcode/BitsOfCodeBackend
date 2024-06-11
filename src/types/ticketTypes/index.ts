@@ -1,15 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { IUser } from "../userTypes";
 
 export interface ITicket extends Document {
+	_id: ObjectId;
 	title: string;
 	tags: string[];
-	prority: string;
-	price: string;
+	priority: string;
 	duration: string;
-	developer: mongoose.Schema.Types.ObjectId;
+	developer?: mongoose.Schema.Types.ObjectId;
 	project: mongoose.Schema.Types.ObjectId;
 	description?: string;
+	minimumBid: number;
+	maximumBid: number;
 }
 // description?: object;
 

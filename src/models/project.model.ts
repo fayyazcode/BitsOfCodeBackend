@@ -47,14 +47,16 @@ const projectSchema = new Schema<IProject>(
 			type: Number,
 			required: [true, "Project Budget amount is required!"],
 		},
-		// description: {
-		// 	type: Object,
-		// 	required: [true, "Project Description is required!"],
-		// },
 		description: {
 			type: String,
 			required: [true, "Project Description is required!"],
 		},
+		tickets: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Ticket",
+			},
+		],
 	},
 	{
 		timestamps: true,

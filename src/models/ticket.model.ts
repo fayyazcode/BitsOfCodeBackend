@@ -15,14 +15,9 @@ const ticketSchema = new Schema<ITicket>(
 				trim: true,
 			},
 		],
-		prority: {
+		priority: {
 			type: String,
 			required: [true, "Ticket Priority is required!!"],
-			trim: true,
-		},
-		price: {
-			type: String,
-			required: [true, "Ticket Price is required!!"],
 			trim: true,
 		},
 		duration: {
@@ -30,10 +25,6 @@ const ticketSchema = new Schema<ITicket>(
 			required: [true, "Ticket Duration is required!!"],
 			trim: true,
 		},
-		// description: {
-		// 	type: Object,
-		// 	required: [true, "Project Description is required!"],
-		// },
 		description: {
 			type: String,
 			required: [true, "Project Description is required!"],
@@ -45,6 +36,16 @@ const ticketSchema = new Schema<ITicket>(
 		project: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Project",
+		},
+		minimumBid: {
+			type: Number,
+			required: [true, "Minimum Bid is required!!"],
+			trim: true,
+		},
+		maximumBid: {
+			type: Number,
+			required: [true, "Minimum Bid is required!!"],
+			trim: true,
 		},
 	},
 	{
