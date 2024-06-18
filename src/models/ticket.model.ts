@@ -17,6 +17,7 @@ const ticketSchema = new Schema<ITicket>(
 		],
 		priority: {
 			type: String,
+			enum: ["urgent", "medium", "1 week"],
 			required: [true, "Ticket Priority is required!!"],
 			trim: true,
 		},
@@ -46,6 +47,10 @@ const ticketSchema = new Schema<ITicket>(
 			type: Number,
 			required: [true, "Minimum Bid is required!!"],
 			trim: true,
+		},
+		applied: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
 		},
 	},
 	{

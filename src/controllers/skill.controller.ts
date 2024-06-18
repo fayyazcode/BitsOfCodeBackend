@@ -14,7 +14,7 @@ const getAllSkills = asyncHandler(async (req: Request, res: Response) => {
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, skills, "Projects successfully fetched!"));
+		.json(new ApiResponse(200, skills, "Skills successfully fetched!"));
 });
 
 const getSkill = asyncHandler(async (req: Request, res: Response) => {

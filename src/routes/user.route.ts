@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+	allDevelopers,
 	allUsers,
 	fetchProjectManagersOrTeamLead,
 	loginUser,
@@ -51,5 +52,7 @@ router.patch(
 // router.put("/editprofile", authenticate, AuthController.userProfileEdit);
 
 router.route("/").get(authMiddleware, allUsers);
+
+router.route("/developers").get(authMiddleware, allDevelopers);
 
 export default router;

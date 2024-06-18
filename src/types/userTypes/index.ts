@@ -23,6 +23,7 @@ export interface IUser extends IUserDocument {
 	createdAt?: Date;
 	updatedAt?: Date;
 	_doc: any;
+	skills?: string;
 
 	// Instance methods
 	isPasswordCorrect(password: string): Promise<boolean>;
