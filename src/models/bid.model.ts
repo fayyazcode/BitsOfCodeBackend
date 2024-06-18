@@ -29,4 +29,12 @@ const bidSchema = new Schema<IBid>(
 	}
 );
 
+// Middleware to update Ticket when a new Bid is added
+bidSchema.post<IBid>("save", async function (bid) {
+	// Find the corresponding Ticket and update its bids array
+	await mongoose
+		.model("Ticket")
+		.updateOne({ _id: bid.ticket }, { $addToSet: { bids: bid._id } });
+});
+
 export const Bid = mongoose.model<IBid>("Bid", bidSchema);

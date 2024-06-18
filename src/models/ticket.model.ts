@@ -52,6 +52,12 @@ const ticketSchema = new Schema<ITicket>(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 		},
+		bids: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Bid",
+			},
+		],
 	},
 	{
 		timestamps: true,

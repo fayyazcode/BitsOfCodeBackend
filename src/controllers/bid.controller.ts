@@ -75,17 +75,11 @@ const addTicketBid = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const updateTicketBid = asyncHandler(async (req: Request, res: Response) => {
-	const { amount, bidder, ticket } = req.body;
+	const { amount, bidder } = req.body;
 	const { id } = req.params;
 
-	if (!amount || !bidder || !ticket) {
+	if (!amount || !bidder) {
 		throw new ApiError(400, "Please enter all fields!");
-	}
-
-	const findTicket = await Ticket.findById(ticket);
-
-	if (!findTicket) {
-		throw new ApiError(400, "Ticket not found!");
 	}
 
 	const findBid = await Bid.findById(id);
