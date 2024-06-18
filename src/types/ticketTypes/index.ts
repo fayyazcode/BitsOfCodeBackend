@@ -10,6 +10,7 @@ export interface ITicket extends Document {
 	developer?: mongoose.Schema.Types.ObjectId;
 	project: mongoose.Schema.Types.ObjectId;
 	applied?: mongoose.Schema.Types.ObjectId;
+	bids?: mongoose.Schema.Types.ObjectId[];
 	description?: string;
 	minimumBid: number;
 	maximumBid: number;

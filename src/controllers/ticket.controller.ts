@@ -13,7 +13,22 @@ const getAllTickets = asyncHandler(async (req: Request, res: Response) => {
 		project: projectId,
 	})
 		.populate("project")
-		.populate("developer");
+		.populate("developer")
+		.populate({
+			path: "bids",
+			populate: {
+				path: "bidder",
+				model: "User",
+				select: "-password -refreshTokens",
+			},
+		})
+		.populate({
+			path: "bids",
+			populate: {
+				path: "ticket",
+				model: "Ticket",
+			},
+		});
 
 	if (!tickets) {
 		throw new ApiError(404, "No tickets available!");
@@ -27,7 +42,23 @@ const getAllTickets = asyncHandler(async (req: Request, res: Response) => {
 const getSingleTicket = asyncHandler(async (req: Request, res: Response) => {
 	const { id } = req.params;
 
-	const ticket = await Ticket.findById(id).populate("developer", "project");
+	const ticket = await Ticket.findById(id)
+		.populate("developer", "project")
+		.populate({
+			path: "bids",
+			populate: {
+				path: "bidder",
+				model: "User",
+				select: "-password -refreshTokens",
+			},
+		})
+		.populate({
+			path: "bids",
+			populate: {
+				path: "ticket",
+				model: "Ticket",
+			},
+		});
 
 	if (!ticket) {
 		throw new ApiError(404, "No such ticket available!");

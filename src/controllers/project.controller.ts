@@ -15,8 +15,28 @@ const getAllProjects = asyncHandler(async (req: Request, res: Response) => {
 	const projects = await Project.find()
 		.populate("projectManager", "name email")
 		.populate("clientName", "name email")
-		.populate("tickets");
-
+		.populate("tickets")
+		.populate({
+			path: "tickets",
+			populate: {
+				path: "bids",
+				populate: {
+					path: "bidder",
+					model: "User",
+					select: "-password -refreshTokens",
+				},
+			},
+		})
+		.populate({
+			path: "tickets",
+			populate: {
+				path: "bids",
+				populate: {
+					path: "ticket",
+					model: "Ticket",
+				},
+			},
+		});
 	if (!projects) {
 		throw new ApiError(404, "No projects available!");
 	}
@@ -32,7 +52,28 @@ const getSingleProject = asyncHandler(async (req: Request, res: Response) => {
 	const project = await Project.findById(id)
 		.populate("projectManager", "name email")
 		.populate("clientName", "name email")
-		.populate("tickets");
+		.populate("tickets")
+		.populate({
+			path: "tickets",
+			populate: {
+				path: "bids",
+				populate: {
+					path: "bidder",
+					model: "User",
+					select: "-password -refreshTokens",
+				},
+			},
+		})
+		.populate({
+			path: "tickets",
+			populate: {
+				path: "bids",
+				populate: {
+					path: "ticket",
+					model: "Ticket",
+				},
+			},
+		});
 
 	if (!project) {
 		throw new ApiError(404, "No such project available!");
