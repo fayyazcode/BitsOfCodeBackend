@@ -4,11 +4,8 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { User } from "../models/user.model";
 import { ResetPasswordToken } from "../models/resetPasswordToken.model";
 import sendEmail from "../utils/sendMail";
-import crypto from "crypto";
 import { IUser } from "../types/userTypes";
 import { Request, Response } from "express";
-
-const EXPIRE_TIME = 24 * 60 * 60 * 1000;
 
 // Generate New Refresh Token and Access Token
 const generateAccessAndRefreshTokens = async (userId: string) => {
@@ -122,10 +119,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 		secure: true,
 	};
 
-	console.log({
-		expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-	});
-
 	return res
 		.status(200)
 		.cookie("accessToken", accessToken, options)
@@ -137,7 +130,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 					user,
 					accessToken,
 					refreshToken,
-					expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
 				},
 				"Login Successful!"
 			)
@@ -195,6 +187,58 @@ const allUsers = asyncHandler(async (req: Request, res: Response) => {
 		.clearCookie("accessToken", options)
 		.cookie("refreshToken", options)
 		.json(new ApiResponse(200, { users }, "User logged out successfully!"));
+});
+
+// get all developers
+const allDevelopers = asyncHandler(async (req: Request, res: Response) => {
+	const { _id: userId } = req.user;
+	const searchQuery = req.query.search;
+	const skillsParam = req.query.skills;
+
+	// Convert skillsParam to an array of strings if it exists and is a string
+	const skillsFilter = Array.isArray(skillsParam)
+		? skillsParam // If it's already an array, use it directly
+		: typeof skillsParam === "string"
+		? skillsParam.split(",").map((skill) => skill.trim()) // If it's a string, split it into an array
+		: [];
+
+	const keyword = searchQuery
+		? {
+				$and: [
+					{
+						$or: [
+							{ name: { $regex: searchQuery, $options: "i" } },
+							{ email: { $regex: searchQuery, $options: "i" } },
+						],
+					},
+					{
+						assignedRole: "Developer",
+					},
+					skillsFilter.length > 0 ? { skills: { $in: skillsFilter } } : {},
+				],
+		  }
+		: {
+				$and: [
+					{ assignedRole: "Developer" },
+					skillsFilter.length > 0 ? { skills: { $in: skillsFilter } } : {},
+				],
+		  };
+	const options = {
+		httpOnly: true,
+		secure: true,
+	};
+
+	const developers = await User.find(keyword)
+		.find({ _id: { $ne: userId } })
+		.select("-refreshTokens -password -fcmToken");
+
+	return res
+		.status(200)
+		.clearCookie("accessToken", options)
+		.cookie("refreshToken", options)
+		.json(
+			new ApiResponse(200, { developers }, "Developers fetched successfully!")
+		);
 });
 
 // User Profile
@@ -265,7 +309,6 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
 					{
 						accessToken,
 						refreshToken: newRefreshToken,
-						expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
 					},
 					"Access token refreshed successfully!"
 				)
@@ -415,4 +458,5 @@ export {
 	roleAssign,
 	fetchProjectManagersOrTeamLead,
 	verifyResetPasswordOTP,
+	allDevelopers,
 };

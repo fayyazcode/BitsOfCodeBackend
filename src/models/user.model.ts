@@ -30,7 +30,7 @@ const userSchema = new Schema<IUser>(
 		},
 		roles: {
 			type: String,
-			enum: ["freelancer", "client", "super admin"],
+			enum: ["freelancer", "client", "company"],
 			default: "freelancer",
 		},
 		assignedRole: {
@@ -56,6 +56,11 @@ const userSchema = new Schema<IUser>(
 		},
 		refreshTokens: [{ token: String }],
 		fcmToken: [{ type: String }],
+		skills: [
+			{
+				type: String,
+			},
+		],
 	},
 	{
 		timestamps: true,

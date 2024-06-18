@@ -33,6 +33,7 @@ import chatRouter from "./routes/chat.route";
 import messageRouter from "./routes/message.route";
 import skillRouter from "./routes/skill.route";
 import ticketRouter from "./routes/ticket.route";
+import bidRouter from "./routes/bid.route";
 
 // routes declaration
 app.get("/", (req, res) => {
@@ -61,8 +62,11 @@ app.use("/api/v1/message", messageRouter);
 // skill routes
 app.use("/api/v1/skills", skillRouter);
 
-// skill routes
+// ticket routes
 app.use("/api/v1/tickets", ticketRouter);
+
+// bid routes
+app.use("/api/v1/bids", bidRouter);
 
 // http://localhost:8000/api/v1/users/register
 
