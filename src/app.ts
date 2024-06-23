@@ -57,7 +57,7 @@ app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/chats", chatRouter);
 
 // message routes
-app.use("/api/v1/message", messageRouter);
+app.use("/api/v1/messages", messageRouter);
 
 // skill routes
 app.use("/api/v1/skills", skillRouter);
