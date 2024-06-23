@@ -20,7 +20,7 @@ const accessChat = asyncHandler(async (req: Request, res: Response) => {
 			{ users: { $elemMatch: { $eq: userId } } },
 		],
 	})
-		.populate("users", "-password")
+		.populate("users", "-password -refreshTokens")
 		.populate("latestMessage")
 		.populate({
 			path: "latestMessage.sender",
@@ -57,8 +57,8 @@ const fetchChat = asyncHandler(async (req: Request, res: Response) => {
 	const { _id: userId } = req.user;
 
 	const userChats = await Chat.find({ users: userId })
-		.populate("users", "-password")
-		.populate("groupAdmin", "-password")
+		.populate("users", "-password -refreshTokens")
+		.populate("groupAdmin", "-password -refreshTokens")
 		.populate("latestMessage")
 		.sort({ updatedAt: -1 });
 
@@ -108,8 +108,8 @@ const createGroupChat = asyncHandler(async (req: Request, res: Response) => {
 	}
 
 	const _groupChat = await Chat.findById(groupChat._id)
-		.populate("users", "-password")
-		.populate("groupAdmin", "-password");
+		.populate("users", "-password -refreshTokens")
+		.populate("groupAdmin", "-password -refreshTokens");
 
 	return res
 		.status(200)
@@ -133,8 +133,8 @@ const renameGroup = asyncHandler(async (req: Request, res: Response) => {
 			new: true,
 		}
 	)
-		.populate("users", "-password")
-		.populate("groupAdmin", "-password");
+		.populate("users", "-password -refreshTokens")
+		.populate("groupAdmin", "-password -refreshTokens");
 
 	if (!updatedGroupChat) {
 		throw new ApiError(
@@ -166,8 +166,8 @@ const removeFromGroup = asyncHandler(async (req: Request, res: Response) => {
 			new: true,
 		}
 	)
-		.populate("users", "-password")
-		.populate("groupAdmin", "-password");
+		.populate("users", "-password -refreshTokens")
+		.populate("groupAdmin", "-password -refreshTokens");
 
 	if (!addedToGroup) {
 		throw new ApiError(404, "Unable to remove user to group!");
@@ -192,8 +192,8 @@ const addToGroup = asyncHandler(async (req: Request, res: Response) => {
 			new: true,
 		}
 	)
-		.populate("users", "-password")
-		.populate("groupAdmin", "-password");
+		.populate("users", "-password -refreshTokens")
+		.populate("groupAdmin", "-password -refreshTokens");
 
 	if (!addedToGroup) {
 		throw new ApiError(404, "Unable to add user to group!");
