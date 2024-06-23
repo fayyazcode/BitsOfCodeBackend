@@ -11,7 +11,7 @@ const sendMessage = asyncHandler(async (req: Request, res: Response) => {
 	const { content, chatId } = req.body;
 
 	if (!content || !chatId) {
-		throw new ApiError(400, "Invalid passed with request!");
+		throw new ApiError(400, "Invalid data passed with request!");
 	}
 
 	let newMessage = {
@@ -23,12 +23,12 @@ const sendMessage = asyncHandler(async (req: Request, res: Response) => {
 	let message = await Message.create(newMessage);
 
 	const createdMessage = await Message.findById(message._id)
-		.populate("sender", "-password")
+		.populate("sender", "-password -refreshTokens")
 		.populate("chat");
 
 	const _createdMessage = await User.populate(createdMessage, {
 		path: "chat.users",
-		select: "-password",
+		select: "-password -refreshTokens",
 	});
 
 	if (!_createdMessage) {
@@ -60,13 +60,17 @@ const allMessages = asyncHandler(async (req: Request, res: Response) => {
 	}
 
 	const messages = await Message.find({ chat: chatId })
-		.populate("sender", "-password")
+		.populate("sender", "-password -refreshTokens")
 		.populate("chat");
+
+	console.log({ messages });
 
 	const _messages = await User.populate(messages, {
 		path: "chat.users",
-		select: "-password",
+		select: "-password -refreshTokens",
 	});
+
+	console.log({ _messages });
 
 	if (!_messages) {
 		throw new ApiError(
@@ -77,7 +81,7 @@ const allMessages = asyncHandler(async (req: Request, res: Response) => {
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, _messages, "Chat successfully created!"));
+		.json(new ApiResponse(200, _messages, "Chat successfully fetched!"));
 });
 
 export { sendMessage, allMessages };
